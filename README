@@ -1,0 +1,139 @@
+********************************************************************************************************
+API para reservas de puestos en un estacionamiento
+********************************************************************************************************
+Instalacion:
+
+1. Tener instalado nodejs.
+2. Ingresar el comando  npm install en el terminal.
+3. Para correr ingresar el comando node server.js en el terminal.
+********************************************************************************************************
+Arbol del programa:
+api:
+--Models: //Modelos de la BD y Seeds.
+    --Floor.js
+    --Parking.js
+    --Reserva.js
+    --User.js
+    --parkingSeed.js
+    --userSeed.js
+--Routes: //Rutas y funciones del api.
+    --jwtauth.js
+    --parking.js
+    --users.js
+--node_modules //modulos y dependecias que utiliza el api.
+package.json 
+server.js 
+********************************************************************************************************
+Para la utilizacion del api se recomienda usar la aplicacion de google chrome Postman.
+**NOTA: todos los atributos a enviar deben enviarse como "x-www-form-urlencoded", de otra forma
+el api no funcionara.
+********************************************************************************************************
+Manual:
+
+A continuacion se va a explicar el funcionamiento del api, todas las rutas validas (funciones)
+que puede hacer con ella y lo que se debe pasar a cada una de ellas.
+
+Nota: todas las rutas del api comienzan con localhost:8080/api y puede que se retornen
+elementos en formato JSON.
+
+
+---------------------------------Rutas correspondientes al Usuario:-------------------------------------
+
+-localhost:8080/api/users/signin, metodo POST
+    Con este metodo se crea un nuevo usuario.
+    Se debe enviar lo siguiente:
+	-name: Nombre del Usuario.
+	-lastname: Apellido del Usuario.
+	-email: Correo electronico del Usuario (este atributo debe ser unico para cada usuario).
+	-password: Contrasena del Usuario.
+	No retorna ningun objeto.
+
+-localhost:8080/api/users/login, metodo POST
+    Con este metodo se obtiene un token correspondiente al usuario que haga log in.
+    Se debe enviar lo siguiente:
+	-email: Correo electronico del Usuario.
+	-password: Contrasena del Usuario.
+	Retorna un objeto JSON con los atributos:
+	-token: token con el que se valida al usuario.
+	-exp: tiempo en que expira el token.
+
+-localhost:8080/api/users/index, metodo GET
+    Retorna un arreglo con los datos de todos los usuarios del sistema.
+
+-localhost:8080/api/users/:token, metodo GET
+    Retorna los datos del usuario correspondiente al token.
+
+-localhost:8080/api/users/:token, metodo PUT
+    Actualiza los datos del usuario.
+    Se debe enviar lo siguiente:
+	-name: Nuevo nombre del usuario.
+	-lastname: Nuevo apellido del usuario.
+	-password: Nuevo password del usuario.
+    Nota: No es necesario enviar los 3 atributos siempre. Se puede enviar solo aquel/aquellos
+    atributo(s) que se quiera(n) cambiar.
+
+-localhost:8080/api/users/:token/discharge, metodo PUT
+    Actualiza el atributo "state" del usuario, este define si el usuario esta dado de baja en 
+    el sistema.
+    Este metodo solo puede realizarlo el mismo usuario, al terminar estara dado de baja en el 
+    sistema.
+
+-localhost:8080/api/users/:token/discharge, metodo POST
+    Actualiza el atributo "state" de un usuario, este define si el usuario esta dado de baja en 
+    el sistema.
+    Este metodo solo puede realizarlo un usuario administrador, al terminar el usuario sera
+    daado de baja o sera reincorporado al sistema, dependiendo del estado en el que se encuentre 
+    el usuario antes de llamar a este metodo.
+    Se debe enviar lo siguiente:
+	-email: Correo electronico del usuario al que se va a dar de baja/alta.
+
+-localhost:8080/api/users/:token/reserves, metodo GET
+   Obtiene una lista con todas las reservas de los usuarios.
+
+-localhost:8080/api/users/:token/reserves, metodo POST
+    Crea una nueva reserva al usuario en un piso de su eleccion, siempre que haya disponibilidad
+    y que el usuario no tenga una reserva ya hecha.
+    Se debe enviar lo siguiente:
+	-floor_id: numero del piso que quiere hacer la reservacion.
+
+-localhost:8080/api/users/:token/reserves/:user_email, metodo POST
+    Actualiza la reserva pendiente por pagar del usuario correspondiente al ":user_email", este
+    metodo solo puede ser realizado por un operador.
+
+----------------------------Rutas correspondientes al Estacionamiento:----------------------------------
+
+-localhost:8080/api/parkings/:token, metodo GET
+    Obtiene los atributos del estacionamiento y un arreglo con los atributos de los pisos de dicho
+    estacionamiento.
+
+-localhost:8080/api/parkings/:token, metodo PUT
+    Actualiza el atributo "fare" que corresponde con el costo de la tarifa del estacionamiento.
+    Este metodo solo puede ser realizado por un admin.
+    se debe enviar lo siguiente:
+	-fare: Nuevo precio de la tarifa del estacionamiento. (La cual se cobra por hora).
+
+-localhost:8080/api/parkings/:token/floors, metodo POST
+    Crea un nuevo piso en el estacionamiento. Este metodo solo puede ser realizado por un admin.
+    Se debe pasar lo siguiente:
+	-floor_id: numero del piso que se esta creando (este atributo debe ser unico)
+	-capacity: numero de puestos maximos que tiene el piso.
+
+-localhost:8080/api/parkings/:token/floors/:floor_id, metodo GET
+    Obtiene los atibutos del piso correspondiente a ":floor_id".
+    Este metodo solo puede ser realizado por un admin.
+
+-localhost:8080/api/parkings/:token/floors/:floor_id, metodo PUT
+    Actualiza la cantidad de puestos maximos del piso correspondiente a ":floor_id".
+    Este metodo solo puede ser realizado por un admin.
+    Se debe pasar lo siguiente:
+	-capacity: nuevo numero de puestos maximos que tiene el piso.
+
+-localhost:8080/api/parkings/:token/floors/:floor_id, metodo DELETE
+   Elimina el piso correspondiente a ":floor_id". Este metodo solo puede ser realizado por un admin.
+    
+
+
+
+
+
+
